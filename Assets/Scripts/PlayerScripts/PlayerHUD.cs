@@ -31,8 +31,14 @@ public class PlayerHUD : MonoBehaviour
         currentWeaponList = FindObjectsOfType<WeaponBaseClass>(true);
         foreach(WeaponBaseClass weapon in currentWeaponList)
         {
-            weapon.OnPlayerReload += WeaponEvents_HUDReloading; //Subscribing to reloading event
+            weapon.OnPlayerReload += Weapon_OnPlayerReload; //Subscribing to reloading event
+            weapon.OnPlayerShoot += Weapon_OnPlayerShoot;
         }
+    }
+
+    private void Weapon_OnPlayerShoot(int mag, int reserve)
+    {
+        ammoCurrentMagTMP.SetText(mag + " / " + reserve);
     }
 
     private void OnDestroy()
@@ -41,17 +47,24 @@ public class PlayerHUD : MonoBehaviour
         {
             if (weapon)
             {
-                weapon.OnPlayerReload -= WeaponEvents_HUDReloading; //Subscribing to reloading event
+                weapon.OnPlayerReload -= Weapon_OnPlayerReload; //Subscribing to reloading event
             }
         }
     }
-    private void WeaponEvents_HUDReloading(float reloadSpeed, int magAmmo, int reserveAmmo)
+
+    private void Weapon_OnPlayerReload(float reloadSpeed, int magAmmo, int reserveAmmo)
     {
-        reloadingText.SetActive(true);
-        ammoCurrentMagTMP.SetText(magAmmo + " / " + reserveAmmo);
+        StartCoroutine(ReloadDelay(reloadSpeed, magAmmo, reserveAmmo));
     }
 
-
+    private IEnumerator ReloadDelay(float reloadSpeed, int magAmmo, int reserveAmmo)
+    {
+        reloadingText.SetActive(true);
+        ammoCurrentMagTMP.SetText(0 + " / " + reserveAmmo);
+        yield return new WaitForSeconds(reloadSpeed); //wait according to reload speed
+        ammoCurrentMagTMP.SetText(magAmmo + " / " + reserveAmmo);
+        reloadingText.SetActive(false);
+    }
 
     public void HUDItemVisible(bool hudVisible) //when called, update the visibility with the bool that was passed
     {

@@ -830,7 +830,7 @@ MonoBehaviour:
   reloadSpeed: 2
   magSize: 5
   reserveSize: 200
-  pHUD: {fileID: 0}
+  infiniteAmmo: 0
 --- !u!4 &331146730
 Transform:
   m_ObjectHideFlags: 0
@@ -1531,7 +1531,7 @@ MonoBehaviour:
   reloadSpeed: 2
   magSize: 50
   reserveSize: 200
-  pHUD: {fileID: 236764993}
+  infiniteAmmo: 0
 --- !u!1 &650615960
 GameObject:
   m_ObjectHideFlags: 0
@@ -3269,7 +3269,7 @@ MonoBehaviour:
   reloadSpeed: 1
   magSize: 50
   reserveSize: 200
-  pHUD: {fileID: 0}
+  infiniteAmmo: 0
 --- !u!4 &1461117035
 Transform:
   m_ObjectHideFlags: 0
@@ -3902,7 +3902,21 @@ MonoBehaviour:
   reloadSpeed: 2
   magSize: 30
   reserveSize: 200
-  pHUD: {fileID: 236764993}
+  infiniteAmmo: 0
+--- !u!114 &1840200255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840200250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a656bd6b9d8007489e5f2bb49b0b95b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectPrefab: {fileID: 3950801238585373181, guid: 04c4023e8275dcb449805ad48aa3379e, type: 3}
+  SpawnedObjects: []
 --- !u!1 &1842613366
 GameObject:
   m_ObjectHideFlags: 0
