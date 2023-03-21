@@ -3898,7 +3898,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  fireRate: 0.2
+  fireRate: 0.05
   reloadSpeed: 2
   magSize: 30
   reserveSize: 200
@@ -4837,6 +4837,10 @@ PrefabInstance:
       propertyPath: pHUD
       value: 
       objectReference: {fileID: 236764993}
+    - target: {fileID: 2107910098, guid: 69b0ede90c770c649856085c18141e16, type: 3}
+      propertyPath: godMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1167551041610077328, guid: 69b0ede90c770c649856085c18141e16, type: 3}
       propertyPath: m_RootOrder
       value: 14
