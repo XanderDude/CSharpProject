@@ -1,0 +1,55 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class EnemyAttack : MonoBehaviour
+{
+    enum WeaponType { Projectile, Melee }; //The types of weapons that the player can switch to
+    [SerializeField] private WeaponType enemyWeapon; //a reference to the weapon types
+    [SerializeField] private GameObject projectilePrefab; //the projectile that the player fires for projectile weapon
+    [SerializeField] private Transform weaponAttackSpawn; //where each weapon will spawn its damaging colliders (projectiles for guns)
+    [SerializeField] private int weaponDamage;
+    [SerializeField] private float attackSpeed;
+    private bool fired = false;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    public void DoAttack()
+    {
+
+        switch (enemyWeapon)
+        {
+            case WeaponType.Projectile:
+                GameObject projectileObj;
+                if (!fired)
+                {
+                    projectileObj = Instantiate(projectilePrefab, weaponAttackSpawn.position, transform.rotation); //forward in the direction the enemy is looking
+
+                    if (projectileObj.TryGetComponent<WeaponProjectile>(out WeaponProjectile projectile)) //if projectile has the weapon projectile script, grab it
+                    {
+                        projectile.InitDamage(weaponDamage); //assign the projectile's damamge
+                    }
+                    StartCoroutine(AttackSpeed());
+                }
+                break;
+        }
+    }
+    private IEnumerator AttackSpeed()
+    {
+        fired = true;
+        yield return new WaitForSeconds(attackSpeed); //wait before next attack
+        fired = false;
+    }
+
+}
