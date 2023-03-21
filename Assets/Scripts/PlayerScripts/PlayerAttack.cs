@@ -138,21 +138,16 @@ public class PlayerAttack : MonoBehaviour
     {
         if (!manager.Paused)
         {
-            //if (fired) //gun firing cooldown has started
-            //{
-            //    FireRate(); //calculate firerate for when gun can be fired again
-            //}
+
             if (Input.GetMouseButton(0)) //If shoot button inputed, the fired cooldown has ended, and it's not reloading
             {
                 bool isRaycast = Physics.Raycast(cameraTrans.position, cameraTrans.forward, out RaycastHit hit); //shoot a ray from the camera forward, setting bool if it hits something
                 currentWeapon.Shoot(isRaycast, hit);
-                //FireWeapon(); //attempt to deal damage by shooting/attacking
             }
-            if (Input.GetKeyDown(KeyCode.R) && ammoCurrentReserve > 0 && !reloading)// && ammoCurrentMag != ammoMaxMagSize) //if player wants to reload and reserve is not empty
+            if (Input.GetKeyDown(KeyCode.R))//if player wants to reload
             {
-                reloading = true; //reloading has started
-                StartCoroutine(ReloadDelay()); //wait for reloading to finish, then run ReloadMag()
 
+                currentWeapon.Reload();
             }
             if (Input.GetKeyDown(KeyCode.Alpha1) && playerWeapon != WeaponType.MachineGun)
             {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,6 +9,7 @@ public class PlayerHUD : MonoBehaviour
 
     [SerializeField] private GameObject interactPromptText; //The gameobject with the TMP, Press E to pick up text
     [SerializeField] private GameObject reloadingText; //the object with the reloading text for when the gun is reloading
+
     
     //Ammo HUD elements: 
     [SerializeField] private TextMeshProUGUI ammoCurrentMagTMP; //Player's ammo count
@@ -22,6 +24,33 @@ public class PlayerHUD : MonoBehaviour
     //Wave HUD elements
     [SerializeField] private TextMeshProUGUI waveCurrentTMP; //the current wave that the player's on
     [SerializeField] private TextMeshProUGUI enemyCountCurrentTMP; //the current wave that the player's on
+
+    private WeaponBaseClass[] currentWeaponList; //all weapons in the scene
+    private void Start()
+    {
+        currentWeaponList = FindObjectsOfType<WeaponBaseClass>(true);
+        foreach(WeaponBaseClass weapon in currentWeaponList)
+        {
+            weapon.OnPlayerReload += WeaponEvents_HUDReloading; //Subscribing to reloading event
+        }
+    }
+
+    private void OnDestroy()
+    {
+        foreach (WeaponBaseClass weapon in currentWeaponList)
+        {
+            if (weapon)
+            {
+                weapon.OnPlayerReload -= WeaponEvents_HUDReloading; //Subscribing to reloading event
+            }
+        }
+    }
+    private void WeaponEvents_HUDReloading(float reloadSpeed, int magAmmo, int reserveAmmo)
+    {
+        reloadingText.SetActive(true);
+        ammoCurrentMagTMP.SetText(magAmmo + " / " + reserveAmmo);
+    }
+
 
 
     public void HUDItemVisible(bool hudVisible) //when called, update the visibility with the bool that was passed
@@ -78,6 +107,10 @@ public class PlayerHUD : MonoBehaviour
     public void HUDToggleReloading(bool reloading)//turn off/on reloading text
     {
         reloadingText.SetActive(reloading); 
+    }
+    private void ReloadText(object sender, EventArgs e)
+    {
+        reloadingText.SetActive(true);
     }
 }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,9 +17,11 @@ public class WeaponBaseClass : MonoBehaviour
     private bool reloading = false; //if currently reloading
 
     private ObjectPool pool;
-    private bool infiniteAmmo = false;
+    public bool infiniteAmmo = false;
 
     [SerializeField] private PlayerHUD pHUD;
+    public event Action<float, int, int> OnPlayerReload; //Publisher: event for showing the reloading hud notif. Reload time, current mag ammo, current reserve ammo.
+
 
     private void Start()
     {
@@ -28,15 +31,21 @@ public class WeaponBaseClass : MonoBehaviour
 
     public void Reload()
     {
-        StartCoroutine(ReloadDelay());
+        if (!reloading && currentReserveAmmo > 0)
+        {
+            StartCoroutine(ReloadDelay());
+        }
+
     }
     private IEnumerator ReloadDelay()
     {
-        pHUD.HUDToggleReloading(reloading); //turn on reloading text
+        OnPlayerReload?.Invoke(reloadSpeed, currentMagAmmo, currentReserveAmmo); //invoke weapon reloading event if it exists
+        reloading = true;
+        //pHUD.HUDToggleReloading(reloading); //turn on reloading text
         yield return new WaitForSeconds(reloadSpeed); //wait according to reload speed
         ReloadMag(); //then add ammo to mag
         reloading = false; //the reload has completed
-        pHUD.HUDToggleReloading(reloading); //turn off reloading text
+        //pHUD.HUDToggleReloading(reloading); //turn off reloading text
     }
 
     private void ReloadMag()
@@ -62,7 +71,6 @@ public class WeaponBaseClass : MonoBehaviour
             {
                 return; //do nothing
             }
-            reloading = true; //reloading has started
             StartCoroutine(ReloadDelay()); //wait for reloading to finish, then run ReloadMag()
             return; //cannot fire weapon so exit function
         }
@@ -74,7 +82,8 @@ public class WeaponBaseClass : MonoBehaviour
         }
         if (!infiniteAmmo)
         {
-            currentMagAmmo = -1; //if infinite ammo is off, subract one from mag (Fires the gun)
+            currentMagAmmo -= 1; //if infinite ammo is off, subract one from mag (Fires the gun)
+            OnPlayerReload?.Invoke(reloadSpeed, currentMagAmmo, currentReserveAmmo); //invoke weapon reloading event if it exists
         }
     }
 

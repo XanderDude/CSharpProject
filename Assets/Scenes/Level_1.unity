@@ -3898,9 +3898,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  fireRate: 0.5
+  fireRate: 0.2
   reloadSpeed: 2
-  magSize: 50
+  magSize: 30
   reserveSize: 200
   pHUD: {fileID: 236764993}
 --- !u!1 &1842613366
