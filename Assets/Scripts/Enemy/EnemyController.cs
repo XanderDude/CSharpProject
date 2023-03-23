@@ -94,7 +94,12 @@ public class EnemyController : MonoBehaviour
 
     private void Chase() //Move towards player
     {
-        enemyAgent.SetDestination(player.position); //Set the enemy's destination to the player's position
+
+        enemyAgent.SetDestination(player.position);
+        //if (NavMesh.SamplePosition(player.position, out NavMeshHit hit, 2f, NavMesh.AllAreas)) //check that new destination is within nav mesh
+        //{
+        //    enemyAgent.SetDestination(hit.position); //Set the enemy's destination to the player's position
+        //}
     }
     
     private void Attack() //Stop moving, continue looking at player

@@ -34,10 +34,10 @@ public class UseObjects : MonoBehaviour
             //Note: This only works for ammo interactables
             if (hit.collider.CompareTag("Interactable")) //player has interacted with a pickup
             {
-                int tmpAmmoReserve = GetComponent<PlayerAttack>().AmmoCurrentReserve; //finds the amount of ammo in reserve
-                GetComponent<PlayerAttack>().AmmoCurrentReserve = hit.collider.GetComponent<AmmoPickup>().ammoGainAmount; //add ammo to reserve according to the pickup
+                int tmpAmmoReserve = GetComponent<PlayerInputs>().currentWeapon.CurrentReserveAmmo; //finds the amount of ammo in reserve
+                GetComponent<PlayerInputs>().currentWeapon.CurrentReserveAmmo = hit.collider.GetComponent<AmmoPickup>().ammoGainAmount; //add ammo to reserve according to the pickup
 
-                pHUD.HUDAmmoGained(GetComponent<PlayerAttack>().AmmoCurrentReserve - tmpAmmoReserve); //display how much reserve ammo increased by subracting new amount by amount prior to interacting
+                pHUD.HUDAmmoGained(GetComponent<PlayerInputs>().currentWeapon.CurrentReserveAmmo - tmpAmmoReserve); //display how much reserve ammo increased by subracting new amount by amount prior to interacting
             }
         }
 

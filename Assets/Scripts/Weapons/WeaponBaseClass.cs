@@ -7,19 +7,20 @@ public class WeaponBaseClass : MonoBehaviour
 {
     [SerializeField] protected Transform weaponAttackSpawn; //spawn for projectile
     [SerializeField] protected GameObject projectilePrefab; //the prefab projectile that's fired
-    [SerializeField] private int damage = 10;
-    [SerializeField] private float fireRate = 0.5f; //time to wait till before next bullet can be fired
-    private bool fired = false;
-    [SerializeField] private float reloadSpeed = 2f; //time it takes to refill mag ammo when reloading
-    [SerializeField] private int magSize = 50;
-    private int currentMagAmmo;
+    [SerializeField] protected int damage = 10;
+    [SerializeField] protected float fireRate = 0.5f; //time to wait till before next bullet can be fired
+    [SerializeField] protected bool fired = false;
+    private float fireRateTimer = 0f;
+    [SerializeField] protected float reloadSpeed = 2f; //time it takes to refill mag ammo when reloading
+    public bool reloading = false; //if currently reloading
+    [SerializeField] protected int magSize = 50;
+    protected int currentMagAmmo;
+    [SerializeField] private Animator anim;
     public int CurrentMagAmmo //public property for the player's ammo count in the magazine (reloading/shooting)
     {
         get
         {
-
             return currentMagAmmo;
-          
         }
         set
         {
@@ -39,10 +40,10 @@ public class WeaponBaseClass : MonoBehaviour
             {
                 currentMagAmmo += value; //adjust ammo
             }
-
+            OnPlayerShoot?.Invoke(CurrentMagAmmo, CurrentReserveAmmo); //invoke hud ammo counter to update if exists
         }
     }
-    [SerializeField] private int reserveSize = 200;
+    [SerializeField] protected int reserveSize = 200;
     private int currentReserveAmmo;
     public int CurrentReserveAmmo     //property handling ammo in reserve (not in gun/pickups/pulling from when reloading)
     {
@@ -66,43 +67,68 @@ public class WeaponBaseClass : MonoBehaviour
                 currentReserveAmmo += value; //adjust ammo in reserve
 
             }
-            //Debug.Log(ammoCurrentReserve);
+            OnPlayerShoot?.Invoke(CurrentMagAmmo, CurrentReserveAmmo); //invoke hud ammo counter to update if exists
         }
     }
-    private bool reloading = false; //if currently reloading
 
-    private ObjectPool pool;
-    public bool infiniteAmmo = false;
+
+    [SerializeField] protected ObjectPool objectPool;
+
+    protected bool infiniteAmmo = false;
 
     public event Action<float, int, int> OnPlayerReload; //Publisher: action for showing the reloading hud notif. Reload time, current mag ammo, current reserve ammo.
-    public event Action<int, int> OnPlayerShoot; //Publisher: action for updating hud when shooting, mag capacity and reserve
+    public virtual event Action<int, int> OnPlayerShoot; //Publisher: action for updating hud when shooting, mag capacity and reserve
 
     private void Start()
     {
         currentMagAmmo = magSize;
         currentReserveAmmo = reserveSize;
+        magSize += 1;
+        OnPlayerShoot?.Invoke(CurrentMagAmmo, CurrentReserveAmmo); //invoke hud ammo counter to update if exists
+    }
+
+    private void OnEnable()
+    {
+        if (GameObject.FindGameObjectWithTag("Player").TryGetComponent<PlayerInputs>(out PlayerInputs player))
+        {
+            infiniteAmmo = player.infiniteAmmo;
+        }
+        OnPlayerShoot?.Invoke(CurrentMagAmmo, CurrentReserveAmmo); //invoke hud ammo counter to update if exists
+    }
+
+    private void Update()
+    {
+        if (fired)
+        {
+            fireRateTimer += Time.deltaTime; //when fired start counting
+        }
+        if (fireRateTimer >= fireRate) //when timer reaches fire rate stop counting
+        {
+            fired = false;
+            fireRateTimer = 0;
+        }
     }
 
     public void Reload()
     {
-        if (!reloading && currentReserveAmmo > 0)
+        if (!reloading && currentReserveAmmo > 0 && currentMagAmmo != magSize)
         {
+            Debug.Log("Start Reload");
+            anim.SetTrigger("Reload");
             StartCoroutine(ReloadDelay());
         }
-
     }
-    private IEnumerator ReloadDelay()
+    protected IEnumerator ReloadDelay()
     {
-        OnPlayerReload?.Invoke(reloadSpeed, 0, currentReserveAmmo);
+        OnPlayerReload?.Invoke(reloadSpeed, 0, currentReserveAmmo); //invoke weapon reloading event if it exists
         reloading = true;
         //pHUD.HUDToggleReloading(reloading); //turn on reloading text
         yield return new WaitForSeconds(reloadSpeed); //wait according to reload speed
         ReloadMag(); //then add ammo to mag
-        reloading = false; //the reload has completed
-        //pHUD.HUDToggleReloading(reloading); //turn off reloading text
+
     }
 
-    private void ReloadMag()
+    protected void ReloadMag()
     {
         //This ensures reserve ammo only loses what's needed to refill mag, and the mag only gets what's available in reserve
         //Also checks if mag is empty to prevent magically reloading round in chamber
@@ -111,12 +137,13 @@ public class WeaponBaseClass : MonoBehaviour
             magSize - currentMagAmmo; //..the ammo needed is max minus what's in mag
         CurrentMagAmmo = currentReserveAmmo; //add what's in reserve to mag. Adding reserve for when reserve is not enough to fill mag to max
         CurrentReserveAmmo = -(ammoNeeded); //subtract from reserve what's needed to fill mag.
-        OnPlayerShoot?.Invoke(currentMagAmmo, currentReserveAmmo); //invoke weapon reloading event if it exists
+        //OnPlayerShoot?.Invoke(currentMagAmmo, currentReserveAmmo); //update hud after reload completes
+        reloading = false; //the reload has completed
     }
 
-    public void Shoot(bool raycastHit, RaycastHit hit, Transform cameraTrans)
+    public virtual void Shoot(bool raycastHit, RaycastHit hit, Transform cameraTrans)
     {
-        if (reloading || fired || !raycastHit)
+        if (reloading || fired)
         {
             return;
         }
@@ -129,26 +156,28 @@ public class WeaponBaseClass : MonoBehaviour
             StartCoroutine(ReloadDelay()); //wait for reloading to finish, then run ReloadMag()
             return; //cannot fire weapon so exit function
         }
-        StartCoroutine(FireRate());
-        if (hit.collider.TryGetComponent<EnemyHealth>(out EnemyHealth enemy)) //if raycast hits, try to grab enemy health
+        fired = true;
+        //projectileObj = Instantiate(projectilePrefab, weaponAttackSpawn.position, cameraTrans.rotation); //forward in the direction the camera is looking
+        objectPool.GetObject(weaponAttackSpawn.position, cameraTrans.rotation, null);
+        if (raycastHit && hit.collider.TryGetComponent<EnemyHealth>(out EnemyHealth enemy)) //if raycast hits, try to grab enemy health
         {
             enemy.Damage(damage); //pass damage to enemy Damage function
-            Debug.Log("Enemy Hit");
         }
         if (!infiniteAmmo)
         {
-            CurrentMagAmmo = -1; //if infinite ammo is off, subract one from mag (Fires the gun)
-            OnPlayerShoot?.Invoke(currentMagAmmo, currentReserveAmmo); //invoke weapon reloading event if it exists
+            CurrentMagAmmo = -1; //if infinite ammo is off, subract one from mag
         }
     }
 
-
-
-    private IEnumerator FireRate() //called in update when gun is fired
+    protected IEnumerator FireRate() //called in update when gun is fired
     {
         fired = true; //start fired cooldown
-        yield return new WaitForSeconds(fireRate);
+        yield return new WaitForSecondsRealtime(fireRate); 
         fired = false; //end fired cooldown
-        Debug.Log("Firerate ended is " + fired);
+    }
+
+    public void SwitchWeaponAnim()
+    {
+        anim.SetBool("WeaponEquipped", !anim.GetBool("WeaponEquipped")); 
     }
 }

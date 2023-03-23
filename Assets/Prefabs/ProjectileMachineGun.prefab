@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 3950801238585373180}
   - component: {fileID: 3950801238585373175}
   - component: {fileID: -4854126222420275288}
-  m_Layer: 0
-  m_Name: Projectile
+  m_Layer: 2
+  m_Name: ProjectileMachineGun
   m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,7 +95,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3950801238585373181}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -166,13 +166,22 @@ TrailRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.13889569
-        value: 0.104836464
+        time: 0.16144292
+        value: 0.21197277
         inSlope: -0.17866763
         outSlope: -0.17866763
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.9750012
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.71105105
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -228,6 +237,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projDamage: 50
-  projSpeed: 100
+  projSpeed: 600
   rb: {fileID: 3950801238585373180}
-  lifetime: 4
+  lifetime: 1
+  impactExplosion: {fileID: 0}
+  objectPool: {fileID: 0}
+  trail: {fileID: 3950801238585373175}

@@ -42,6 +42,12 @@ public class PlayerContoller : MonoBehaviour
         currentSpeed = walkSpeed; //set the current move speed to the default move speed;
     }
 
+    private void OnDestroy()
+    {
+        Cursor.visible = true; //Make the cursor visible
+        Cursor.lockState = CursorLockMode.None; //unlocks the cursor
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -52,8 +58,6 @@ public class PlayerContoller : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space) && GroundCheck())
             {
                 velocity = jumpForce;
-
-                Debug.Log("Jumping");
             }
 
             Gravity();

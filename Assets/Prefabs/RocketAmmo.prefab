@@ -356,7 +356,7 @@ GameObject:
   - component: {fileID: 2307654440675195668}
   - component: {fileID: 8147602203684343397}
   m_Layer: 0
-  m_Name: AmmoPickup
+  m_Name: RocketAmmo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -406,8 +406,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56e26b11e60627741b84bffe99454758, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pHUD: {fileID: 0}
   ammoGainAmount: 25
+  MGAmmoGain: 50
+  RLAmmoGain: 10
+  rotateSpeed: 50
+  currentAmmoType: 1
 --- !u!1 &8825434184658852020
 GameObject:
   m_ObjectHideFlags: 0

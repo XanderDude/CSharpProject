@@ -23,6 +23,16 @@ public class MenuManager : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P)) //player presses pause button
         {
             pauseMenu.SetActive(!pauseMenu.activeSelf); //toggle pause menu on and off
+            Cursor.visible = pauseMenu.activeSelf; //Make the cursor visible depending on pause menu
+
+            if (pauseMenu.activeSelf)
+            {
+                Cursor.lockState = CursorLockMode.None; //Unlock the cursor
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked; //Lock the cursor
+            }
             //manager.Paused = pauseMenu.activeSelf; //tell manager to pause or unpause depending if the menu is active
         }
         if (pauseMenu.activeSelf != manager.Paused) //if the pause menu active state does not equal the game paused state
@@ -32,5 +42,8 @@ public class MenuManager : MonoBehaviour
         loseScreen.SetActive(manager.playerDead); //if player dead enable lose screen, else disable
     }
 
-    
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
 }

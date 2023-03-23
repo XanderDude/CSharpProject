@@ -9,8 +9,9 @@ public class PlayerHUD : MonoBehaviour
 
     [SerializeField] private GameObject interactPromptText; //The gameobject with the TMP, Press E to pick up text
     [SerializeField] private GameObject reloadingText; //the object with the reloading text for when the gun is reloading
+    [SerializeField] private TextMeshProUGUI weaponText; //the current equipped weapon text
 
-    
+
     //Ammo HUD elements: 
     [SerializeField] private TextMeshProUGUI ammoCurrentMagTMP; //Player's ammo count
     [SerializeField] private RectTransform ammoGainedTextSpawn; //Origin point for ammo gained text
@@ -26,19 +27,29 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private TextMeshProUGUI enemyCountCurrentTMP; //the current wave that the player's on
 
     private WeaponBaseClass[] currentWeaponList; //all weapons in the scene
+    private PlayerInputs playerInputs;
     private void Start()
     {
+        playerInputs = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInputs>();
+        playerInputs.OnPlayerSwitchWeapons += PlayerInputs_OnPlayerSwitchWeapons;
         currentWeaponList = FindObjectsOfType<WeaponBaseClass>(true);
         foreach(WeaponBaseClass weapon in currentWeaponList)
         {
-            weapon.OnPlayerReload += Weapon_OnPlayerReload; //Subscribing to reloading event
-            weapon.OnPlayerShoot += Weapon_OnPlayerShoot;
+            weapon.OnPlayerReload += Weapon_OnPlayerReload; //Subscribing to reloading action
+            weapon.OnPlayerShoot += Weapon_OnPlayerShoot; //Subscribing to shooting action
         }
+    }
+
+    private void PlayerInputs_OnPlayerSwitchWeapons(string weapon, int mag, int reserve)
+    {
+        weaponText.SetText(weapon);
+        ammoCurrentMagTMP.SetText(mag + " / " + reserve);
     }
 
     private void Weapon_OnPlayerShoot(int mag, int reserve)
     {
         ammoCurrentMagTMP.SetText(mag + " / " + reserve);
+        Debug.Log("Ammo updated");
     }
 
     private void OnDestroy()

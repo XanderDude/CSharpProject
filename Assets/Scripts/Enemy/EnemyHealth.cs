@@ -50,10 +50,9 @@ public class EnemyHealth : MonoBehaviour
 
     public void Damage(int damageAmount) //called when this enemy takes damage
     {
-        Debug.Log("Enemy took damage");
-
         damageTaken = true;
         lerpTimer = 0;
+        currentHealth -= damageAmount; //reduce health by damamge amount
         if (currentHealth <= 0)
         {
             if (spawnManager != null)
@@ -63,10 +62,5 @@ public class EnemyHealth : MonoBehaviour
             gameObject.SetActive(false);//disable self on death
             //dead
         }
-        else
-        {
-            currentHealth -= damageAmount; //reduce health by damamge amount
-        }
-
     }
 }

@@ -50,8 +50,10 @@ public class WaveManager : MonoBehaviour
 
         if (wave == waveSpawnAmount.Length - 1)
         {
+            spawning = true;
             //final wave completed
             pHUD.HUDWavesCompleted();//update hud with waves completed text
+            manager.WavesComplete();
             return;
         }
 

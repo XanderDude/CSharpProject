@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance; //a reference for the game manager
+    public static GameObject player;
 
     public bool playerDead = false;
     private bool reloadingScene = false;
@@ -21,17 +22,14 @@ public class GameManager : MonoBehaviour
                 {
                     Time.timeScale = 0f;
                     paused = true;
-                    Debug.Log("Game Paused");
                 }
                 else if(value == false && !playerDead)
                 {
                     Time.timeScale = 1f;
                     paused = false;
-                    Debug.Log("Game Unpaused");
                 }
             }
-        }
-        
+        } 
     }
 
 
@@ -40,11 +38,13 @@ public class GameManager : MonoBehaviour
         if (instance != null) //if an instance exists (not null)
         {
             Destroy(this.gameObject); //destroy self
+            return;
         }
 
-        instance = this; 
-
+        instance = this;
         DontDestroyOnLoad(this.gameObject); //ensure this game object with the gameManager persists when loading scenes
+
+        //instance.gameObject.tag = "GameController";
     }
 
     private void Update()
@@ -54,7 +54,10 @@ public class GameManager : MonoBehaviour
             reloadingScene = true;
             PlayerDead();
         }
+
     }
+
+
 
     public void LoadScene(int sceneIndex)
     {
@@ -81,6 +84,20 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(2);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        reloadingScene = false;
+        playerDead = false;
+    }
+
+    public void WavesComplete()
+    {
+        StartCoroutine(LoadNextLevel());
+    }
+    private IEnumerator LoadNextLevel()
+    {
+        yield return new WaitForSecondsRealtime(2);
+        if (SceneManager.GetActiveScene().name != "Level2") 
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         reloadingScene = false;
         playerDead = false;
     }
