@@ -129,6 +129,7 @@ GameObject:
   - component: {fileID: 5702984163352551799}
   - component: {fileID: 1882324614223156342}
   - component: {fileID: 5812379927773289995}
+  - component: {fileID: 936730191841393093}
   m_Layer: 0
   m_Name: EnemyFlyingPrefab 1
   m_TagString: Enemy
@@ -246,6 +247,21 @@ MonoBehaviour:
   weaponAttackSpawn: {fileID: 6448806084079321331}
   weaponDamage: 10
   attackSpeed: 2
+  pool: {fileID: 936730191841393093}
+--- !u!114 &936730191841393093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5702984163352551798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a656bd6b9d8007489e5f2bb49b0b95b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectPrefab: {fileID: 3950801238585373181, guid: 269adce1184db4548bb5a6e152d2c556, type: 3}
+  SpawnedObjects: []
 --- !u!1 &5702984163458745662
 GameObject:
   m_ObjectHideFlags: 0

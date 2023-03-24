@@ -39,7 +39,7 @@ public class RocketLauncher : WeaponBaseClass
         }
         if (projectileObj.TryGetComponent<WeaponProjectile>(out WeaponProjectile projectile)) //if projectile has the weapon projectile script, grab it
         {
-            projectile.InitDamage(damage); //assign the projectile's damamge
+            projectile.InitDamage(damage, pushBack); //assign the projectile's damamge
         }
         if (!infiniteAmmo)
         {

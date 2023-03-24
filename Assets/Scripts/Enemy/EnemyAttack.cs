@@ -12,18 +12,7 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] private int weaponDamage;
     [SerializeField] private float attackSpeed;
     private bool fired = false;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    [SerializeField] private ObjectPool pool;
 
     public void DoAttack()
     {
@@ -34,11 +23,10 @@ public class EnemyAttack : MonoBehaviour
                 GameObject projectileObj;
                 if (!fired)
                 {
-                    projectileObj = Instantiate(projectilePrefab, weaponAttackSpawn.position, transform.rotation); //forward in the direction the enemy is looking
-
+                    projectileObj = pool.GetObject(weaponAttackSpawn.position, transform.rotation, null);
                     if (projectileObj.TryGetComponent<WeaponProjectile>(out WeaponProjectile projectile)) //if projectile has the weapon projectile script, grab it
                     {
-                        projectile.InitDamage(weaponDamage); //assign the projectile's damamge
+                        projectile.InitDamage(weaponDamage, 0); //assign the projectile's damamge
                     }
                     StartCoroutine(AttackSpeed());
                 }

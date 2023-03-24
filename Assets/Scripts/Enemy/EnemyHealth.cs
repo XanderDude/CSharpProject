@@ -11,9 +11,9 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private Material damageMat; //the mat to use when damage is taken'
     private Color defaultMat;
     [SerializeField] private MeshRenderer mesh; //the mesh on the enemy
-    private Color lerpColor; //the changing color, going from damageMat color to defaultMat color
     private float lerpTimer = 0;
     private bool damageTaken;
+    private Rigidbody rb;
 
     private WaveManager spawnManager;
 
@@ -25,8 +25,8 @@ public class EnemyHealth : MonoBehaviour
         {
             spawnManager = GetComponentInParent<WaveManager>(); //ref for updating remaining enemies
         }
-        
         defaultMat = mesh.material.color;
+        rb = GetComponent<Rigidbody>();
     }
 
     private void OnEnable()
@@ -35,32 +35,28 @@ public class EnemyHealth : MonoBehaviour
         mesh.material.color = defaultMat; //set mat back to default
         damageTaken = false;
     }
-    // Update is called once per frame
 
+    // Update is called once per frame
     private void Update()
     {
         if (damageTaken)
         {
             lerpTimer += Time.deltaTime;
-
             mesh.material.color = Color.Lerp(Color.red, defaultMat, lerpTimer * 2);
-
         }
     }
 
-    public void Damage(int damageAmount) //called when this enemy takes damage
+    public void Damage(int damageAmount, int pushBack, Vector3 hitPos) //called when this enemy takes damage
     {
+        Vector3 pushDirection = transform.position - hitPos;
+        rb.AddForce(pushDirection * pushBack, ForceMode.Impulse);
         damageTaken = true;
         lerpTimer = 0;
         currentHealth -= damageAmount; //reduce health by damamge amount
         if (currentHealth <= 0)
         {
-            if (spawnManager != null)
-            {
-                spawnManager.EnemyDefeated();//update spawn manager, which then also updates hud
-            }
+            spawnManager?.EnemyDefeated();//update spawn manager, which then also updates hud
             gameObject.SetActive(false);//disable self on death
-            //dead
         }
     }
 }

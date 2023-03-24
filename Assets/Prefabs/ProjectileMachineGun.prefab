@@ -236,6 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b029730726957754589c4cfe4c33ae44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentTarget: 1
   projDamage: 50
   projSpeed: 600
   rb: {fileID: 3950801238585373180}

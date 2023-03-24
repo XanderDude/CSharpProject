@@ -8,8 +8,9 @@ public class WeaponBaseClass : MonoBehaviour
     [SerializeField] protected Transform weaponAttackSpawn; //spawn for projectile
     [SerializeField] protected GameObject projectilePrefab; //the prefab projectile that's fired
     [SerializeField] protected int damage = 10;
+    [SerializeField] protected int pushBack = 15;
     [SerializeField] protected float fireRate = 0.5f; //time to wait till before next bullet can be fired
-    [SerializeField] protected bool fired = false;
+    protected bool fired = false;
     private float fireRateTimer = 0f;
     [SerializeField] protected float reloadSpeed = 2f; //time it takes to refill mag ammo when reloading
     public bool reloading = false; //if currently reloading
@@ -71,7 +72,6 @@ public class WeaponBaseClass : MonoBehaviour
         }
     }
 
-
     [SerializeField] protected ObjectPool objectPool;
 
     protected bool infiniteAmmo = false;
@@ -113,14 +113,13 @@ public class WeaponBaseClass : MonoBehaviour
     {
         if (!reloading && currentReserveAmmo > 0 && currentMagAmmo != magSize)
         {
-            Debug.Log("Start Reload");
-            anim.SetTrigger("Reload");
             StartCoroutine(ReloadDelay());
         }
     }
     protected IEnumerator ReloadDelay()
     {
         OnPlayerReload?.Invoke(reloadSpeed, 0, currentReserveAmmo); //invoke weapon reloading event if it exists
+        anim.SetTrigger("Reload");
         reloading = true;
         //pHUD.HUDToggleReloading(reloading); //turn on reloading text
         yield return new WaitForSeconds(reloadSpeed); //wait according to reload speed
@@ -143,6 +142,11 @@ public class WeaponBaseClass : MonoBehaviour
 
     public virtual void Shoot(bool raycastHit, RaycastHit hit, Transform cameraTrans)
     {
+        //if (anim.GetCurrentAnimatorStateInfo(0).IsName(idle.name))
+        //{
+        //    Debug.Log("Gun is in idle");
+        //}
+        
         if (reloading || fired)
         {
             return;
@@ -157,11 +161,11 @@ public class WeaponBaseClass : MonoBehaviour
             return; //cannot fire weapon so exit function
         }
         fired = true;
-        //projectileObj = Instantiate(projectilePrefab, weaponAttackSpawn.position, cameraTrans.rotation); //forward in the direction the camera is looking
+        anim.SetTrigger("Shoot");
         objectPool.GetObject(weaponAttackSpawn.position, cameraTrans.rotation, null);
         if (raycastHit && hit.collider.TryGetComponent<EnemyHealth>(out EnemyHealth enemy)) //if raycast hits, try to grab enemy health
         {
-            enemy.Damage(damage); //pass damage to enemy Damage function
+            enemy.Damage(damage, pushBack, transform.position); //pass damage, push back, and direction of attack to enemy Damage function
         }
         if (!infiniteAmmo)
         {

@@ -10,7 +10,7 @@ public class PlayerInputs : MonoBehaviour
     private GameManager manager;
     private Transform cameraTrans; //pos and rotation of main camera
 
-    public enum WeaponType { MachineGun, RocketL, Sword }; //The types of weapons that the player can switch to
+    public enum WeaponType { MachineGun, RocketLauncher, Sword }; //The types of weapons that the player can switch to
     public WeaponType playerWeapon; //a reference to the weapon types
     public WeaponBaseClass[] weapons;
     public WeaponBaseClass currentWeapon;
@@ -56,11 +56,11 @@ public class PlayerInputs : MonoBehaviour
                 playerWeapon = WeaponType.MachineGun;
                 SwitchWeapon();
             }
-            if (Input.GetKeyDown(KeyCode.Alpha2) && playerWeapon != WeaponType.RocketL)
+            if (Input.GetKeyDown(KeyCode.Alpha2) && playerWeapon != WeaponType.RocketLauncher)
             {
                 currentWeapon.SwitchWeaponAnim();
-                currentWeapon = weapons[(int)WeaponType.RocketL];
-                playerWeapon = WeaponType.RocketL;
+                currentWeapon = weapons[(int)WeaponType.RocketLauncher];
+                playerWeapon = WeaponType.RocketLauncher;
                 SwitchWeapon();
             }
             if (Input.GetKeyDown(KeyCode.Alpha3) && playerWeapon != WeaponType.Sword)
@@ -70,7 +70,6 @@ public class PlayerInputs : MonoBehaviour
                 playerWeapon = WeaponType.Sword;
                 SwitchWeapon();
             }
-
         }
     }
     
@@ -87,7 +86,8 @@ public class PlayerInputs : MonoBehaviour
         //        weapon.gameObject.SetActive(true);
         //    }
         //}
-        OnPlayerSwitchWeapons?.Invoke(currentWeapon.name, currentWeapon.CurrentMagAmmo, currentWeapon.CurrentReserveAmmo);
+
+        OnPlayerSwitchWeapons?.Invoke(Enum.GetName(typeof(WeaponType), playerWeapon), currentWeapon.CurrentMagAmmo, currentWeapon.CurrentReserveAmmo);
         currentWeapon.SwitchWeaponAnim();
     }
 }
