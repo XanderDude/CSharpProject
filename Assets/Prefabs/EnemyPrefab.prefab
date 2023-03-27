@@ -232,6 +232,8 @@ MonoBehaviour:
   currentHealth: 100
   damageMat: {fileID: 2100000, guid: 3c4d9dc16f271794587c0f199f3a1c36, type: 2}
   mesh: {fileID: 5702984165304764107}
+  rb: {fileID: 9068590731439432089}
+  controller: {fileID: 5702984163352551799}
 --- !u!114 &5812379927773289995
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class BasicPickup : MonoBehaviour
 {
-    [SerializeField] private int healthGainAmount = 15;
 
     private void Start()
     {

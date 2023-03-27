@@ -16,7 +16,7 @@ public class WeaponBaseClass : MonoBehaviour
     public bool reloading = false; //if currently reloading
     [SerializeField] protected int magSize = 50;
     protected int currentMagAmmo;
-    [SerializeField] private Animator anim;
+    [SerializeField] protected Animator anim;
     public int CurrentMagAmmo //public property for the player's ammo count in the magazine (reloading/shooting)
     {
         get
@@ -109,7 +109,7 @@ public class WeaponBaseClass : MonoBehaviour
         }
     }
 
-    public void Reload()
+    public virtual void Reload()
     {
         if (!reloading && currentReserveAmmo > 0 && currentMagAmmo != magSize)
         {

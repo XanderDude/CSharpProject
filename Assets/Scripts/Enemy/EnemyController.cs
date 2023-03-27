@@ -26,6 +26,8 @@ public class EnemyController : MonoBehaviour
 
     [SerializeField] private EnemyAttack enemyAttack; //reference for the attack script that handles how the enemy should attack
 
+    private bool dead = false;
+
     public bool PlayerInSightRange
     {
         get { return playerInSightRange; }
@@ -45,7 +47,7 @@ public class EnemyController : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         startPos = GetComponent<Transform>().position; //the place to return to if there cannot be new destination to set
         enemyAgent = GetComponent<NavMeshAgent>(); //assigns ref own nav mesh agent component
@@ -55,9 +57,16 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        dead = false;
+        enemyAgent.enabled = true;
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (dead) return; //no checks if dead
         PlayerInSightRange = Physics.CheckSphere(transform.position, sightRange, playerMask); //returns true if player in chase range
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerMask); //returns true if player in attack range
 
@@ -126,5 +135,11 @@ public class EnemyController : MonoBehaviour
             return hit.position;
         }
         return startPos; //if cannot find acceptable destination, return to starting position
+    }
+
+    public void Dead() //called to give controller death behavior
+    {
+        dead = true;
+        enemyAgent.enabled = false;
     }
 }

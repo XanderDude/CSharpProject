@@ -13,8 +13,8 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private MeshRenderer mesh; //the mesh on the enemy
     private float lerpTimer = 0;
     private bool damageTaken;
-    private Rigidbody rb;
-
+    [SerializeField] private Rigidbody rb;
+    [SerializeField] private EnemyController controller;
     private WaveManager spawnManager;
 
     // Start is called before the first frame update
@@ -26,7 +26,6 @@ public class EnemyHealth : MonoBehaviour
             spawnManager = GetComponentInParent<WaveManager>(); //ref for updating remaining enemies
         }
         defaultMat = mesh.material.color;
-        rb = GetComponent<Rigidbody>();
     }
 
     private void OnEnable()
@@ -39,24 +38,42 @@ public class EnemyHealth : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (damageTaken)
+        if (damageTaken && currentHealth > 0)
         {
             lerpTimer += Time.deltaTime;
             mesh.material.color = Color.Lerp(Color.red, defaultMat, lerpTimer * 2);
         }
+
     }
 
     public void Damage(int damageAmount, int pushBack, Vector3 hitPos) //called when this enemy takes damage
     {
+        if (currentHealth <= 0)
+        {
+            return; //only run once on death
+        }
         Vector3 pushDirection = transform.position - hitPos;
         rb.AddForce(pushDirection * pushBack, ForceMode.Impulse);
         damageTaken = true;
         lerpTimer = 0;
         currentHealth -= damageAmount; //reduce health by damamge amount
+        mesh.material.color = Color.red; //show damage received
         if (currentHealth <= 0)
         {
-            spawnManager?.EnemyDefeated();//update spawn manager, which then also updates hud
-            gameObject.SetActive(false);//disable self on death
+            rb.AddForce(pushDirection * pushBack, ForceMode.Impulse);
+            spawnManager?.EnemyDefeated();  //update spawn manager, which then also updates hud
+            Death();
         }
+    }
+
+    private void Death()
+    {
+        controller.Dead();
+        StartCoroutine(DeathTimer());
+    }
+    private IEnumerator DeathTimer()
+    {
+        yield return new WaitForSeconds(2);
+        gameObject.SetActive(false);//disable self on death
     }
 }
