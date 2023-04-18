@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class PlayerInputs : MonoBehaviour
 {
-    [SerializeField] private PlayerHUD pHUD; //the hud script that handles updating hud elements
     private GameManager manager;
     private Transform cameraTrans; //pos and rotation of main camera
 

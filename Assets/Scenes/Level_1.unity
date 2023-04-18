@@ -1358,7 +1358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2aff1cebb4d5f34ca1d24e522a743ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveSpawnAmount: 04000000060000000a000000
+  waveSpawnAmount: 010000000100000001000000
   waveDelay: 3
   objectPool: {fileID: 815195142}
   spawnLocations:
