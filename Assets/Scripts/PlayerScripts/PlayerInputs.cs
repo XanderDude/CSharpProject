@@ -9,7 +9,7 @@ public class PlayerInputs : MonoBehaviour
     private GameManager manager;
     private Transform cameraTrans; //pos and rotation of main camera
 
-    public enum WeaponType { MachineGun, RocketLauncher, Sword }; //The types of weapons that the player can switch to
+    public enum WeaponType { MachineGun, RocketLauncher, Sword, Pistol }; //The types of weapons that the player can switch to
     public WeaponType playerWeapon; //a reference to the weapon types
     public WeaponBaseClass[] weapons;
     public WeaponBaseClass currentWeapon;
@@ -23,7 +23,7 @@ public class PlayerInputs : MonoBehaviour
     {
         cameraTrans = Camera.main.transform;
         manager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
-        weapons = GetComponentsInChildren<WeaponBaseClass>();
+        weapons = GetComponentsInChildren<WeaponBaseClass>(true);
         currentWeapon = weapons[(int)playerWeapon];
         currentWeapon.SwitchWeaponAnim();
     }
@@ -38,6 +38,11 @@ public class PlayerInputs : MonoBehaviour
             {
                 bool isRaycast = Physics.Raycast(cameraTrans.position, cameraTrans.forward, out RaycastHit hit); //shoot a ray from the camera forward, setting bool if it hits something
                 currentWeapon.Shoot(isRaycast, hit, cameraTrans);
+            }
+            else
+            {
+                if (currentWeapon.triggerPressed)
+                    currentWeapon.triggerPressed = false;
             }
             if (Input.GetKeyDown(KeyCode.R))//if player wants to reload
             {
@@ -67,6 +72,13 @@ public class PlayerInputs : MonoBehaviour
                 currentWeapon.SwitchWeaponAnim();
                 currentWeapon = weapons[(int)WeaponType.Sword];
                 playerWeapon = WeaponType.Sword;
+                SwitchWeapon();
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                currentWeapon.SwitchWeaponAnim();
+                currentWeapon = weapons[(int)WeaponType.Pistol];
+                playerWeapon = WeaponType.Pistol;
                 SwitchWeapon();
             }
         }

@@ -9,6 +9,8 @@ public class WeaponBaseClass : MonoBehaviour
     [SerializeField] protected GameObject projectilePrefab; //the prefab projectile that's fired
     [SerializeField] protected int damage = 10;
     [SerializeField] protected int pushBack = 15;
+    [SerializeField] bool automatic = true; //auto or semi-auto when shooting
+    public bool triggerPressed = false; //check for semi auto
     [SerializeField] protected float fireRate = 0.5f; //time to wait till before next bullet can be fired
     protected bool fired = false;
     private float fireRateTimer = 0f;
@@ -146,7 +148,10 @@ public class WeaponBaseClass : MonoBehaviour
         //{
         //    Debug.Log("Gun is in idle");
         //}
-        
+        if (!automatic && triggerPressed)
+        {
+            return; //don't fire if semi-auto and trigger pressed
+        }
         if (reloading || fired)
         {
             return;
@@ -161,6 +166,7 @@ public class WeaponBaseClass : MonoBehaviour
             return; //cannot fire weapon so exit function
         }
         fired = true;
+        triggerPressed = true;
         anim.SetTrigger("Shoot");
         objectPool.GetObject(weaponAttackSpawn.position, cameraTrans.rotation, null);
         if (raycastHit && hit.collider.TryGetComponent<EnemyHealth>(out EnemyHealth enemy)) //if raycast hits, try to grab enemy health
