@@ -9,7 +9,7 @@ public class PlayerInputs : MonoBehaviour
     private GameManager manager;
     private Transform cameraTrans; //pos and rotation of main camera
 
-    public enum WeaponType { MachineGun, RocketLauncher, Sword, Pistol }; //The types of weapons that the player can switch to
+    public enum WeaponType { MachineGun, RocketLauncher, Sword, Pistol, Shotgun}; //The types of weapons that the player can switch to
     public WeaponType playerWeapon; //a reference to the weapon types
     public WeaponBaseClass[] weapons;
     public WeaponBaseClass currentWeapon;
@@ -79,6 +79,13 @@ public class PlayerInputs : MonoBehaviour
                 currentWeapon.SwitchWeaponAnim();
                 currentWeapon = weapons[(int)WeaponType.Pistol];
                 playerWeapon = WeaponType.Pistol;
+                SwitchWeapon();
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                currentWeapon.SwitchWeaponAnim();
+                currentWeapon = weapons[(int)WeaponType.Shotgun];
+                playerWeapon = WeaponType.Shotgun;
                 SwitchWeapon();
             }
         }
