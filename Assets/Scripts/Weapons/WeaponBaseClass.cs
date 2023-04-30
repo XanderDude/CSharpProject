@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class WeaponBaseClass : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class WeaponBaseClass : MonoBehaviour
     [SerializeField] protected int magSize = 50;
     protected int currentMagAmmo;
     [SerializeField] protected Animator anim;
+    [SerializeField] private VisualEffect muzzleFlash; //muzzle effect when shooting
+    [SerializeField] private VisualEffect casing; //the bullet casing ejected when shooting
     public int CurrentMagAmmo //public property for the player's ammo count in the magazine (reloading/shooting)
     {
         get
@@ -91,6 +94,8 @@ public class WeaponBaseClass : MonoBehaviour
 
     private void OnEnable()
     {
+        if(muzzleFlash != null) muzzleFlash.Stop();
+        if(casing != null) casing.Stop();
         if (GameObject.FindGameObjectWithTag("Player").TryGetComponent<PlayerInputs>(out PlayerInputs player))
         {
             infiniteAmmo = player.infiniteAmmo;
@@ -189,5 +194,14 @@ public class WeaponBaseClass : MonoBehaviour
     public void SwitchWeaponAnim()
     {
         anim.SetBool("WeaponEquipped", !anim.GetBool("WeaponEquipped")); 
+    }
+
+    public void MuzzleFlash()
+    {
+        if(muzzleFlash != null) muzzleFlash.Play();
+    }
+    public void EjectCasing()
+    {
+        if(casing != null) casing.Play();
     }
 }
